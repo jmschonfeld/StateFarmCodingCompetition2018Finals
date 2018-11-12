@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 
 import me.jeremyrobert.sf2018.osm.OpenStreetMap;
 import me.jeremyrobert.sf2018.util.BoundingBox;
-import me.jeremyrobert.sf2018.util.GoogleMapsStaticAPI;
+import me.jeremyrobert.sf2018.util.MapTileAPI;
 import me.jeremyrobert.sf2018.util.InsuranceType;
 
 public class MapViewPanel extends JPanel {
@@ -92,7 +92,7 @@ public class MapViewPanel extends JPanel {
 		
 		Image tile;
 		try {
-			tile = GoogleMapsStaticAPI.getImageForBoundingBox(boundBox);
+			tile = MapTileAPI.getImageForBoundingBox(boundBox);
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "An error ocurred while displaying the map. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
