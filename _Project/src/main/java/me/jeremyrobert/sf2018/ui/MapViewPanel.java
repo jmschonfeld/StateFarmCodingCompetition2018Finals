@@ -27,7 +27,7 @@ public class MapViewPanel extends JPanel {
 	private JTextField searchBar;
 	private JButton searchButton;
 	private JComboBox<String> insuranceSelector;
-	private ImagePanel imageView;
+	private MapImagePanel imageView;
 
 	public MapViewPanel() {
 		this.setLayout(new BorderLayout());
@@ -70,7 +70,7 @@ public class MapViewPanel extends JPanel {
 		menuPanel.setBorder(BorderFactory.createTitledBorder("Menu"));
 		this.add(menuPanel, BorderLayout.EAST);
 		
-		imageView = new ImagePanel(null);
+		imageView = new MapImagePanel(null, 1100, 650);
 		this.add(imageView, BorderLayout.CENTER);
 	}
 	
@@ -103,8 +103,7 @@ public class MapViewPanel extends JPanel {
 			return;
 		}
 		
-		this.imageView.setImage(tile);
-		System.out.println("Updated map");
+		this.imageView.setImage(tile, boundBox);
 		LoadingScreen.end();
 	}
 	

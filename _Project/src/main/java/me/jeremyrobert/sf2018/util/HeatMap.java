@@ -10,6 +10,9 @@ public class HeatMap {
 	private double[][] data;
 	private BoundingBox bbox;
 	
+	private boolean hasUpdates = true;
+	private HashMap<Location, Double> cache;
+	
 	public HeatMap(BoundingBox bbox) {
 		this.bbox = bbox;
 		data = new double[HEATMAP_HEIGHT][HEATMAP_WIDTH];
@@ -18,18 +21,24 @@ public class HeatMap {
 	public void addPoint(Location loc, int value) {
 		Point index = getIndiciesForLocation(loc);
 		data[index.x][index.y] += value;
+		this.hasUpdates = true;
 	}
 	
 	public HashMap<Location, Double> getColoring() {
-		this.normalize();
-		
-		HashMap<Location, Double> values = new HashMap<>();
-		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				values.put(getLocationForIndicies(i, j), data[i][j]);
+		if (this.hasUpdates) {
+			this.normalize();
+			
+			cache = new HashMap<>();
+			for (int i = 0; i < data.length; i++) {
+				for (int j = 0; j < data[i].length; j++) {
+					cache.put(getLocationForIndicies(i, j), data[i][j]);
+				}
 			}
+			this.hasUpdates = false;
 		}
-		return values;
+		
+		
+		return cache;
 	}
 	
 	private void normalize() {
@@ -50,17 +59,17 @@ public class HeatMap {
 	
 	private Location getLocationForIndicies(int x, int y) {
 		double latStep = Math.abs(bbox.getBottomLeft().getLatitude() - bbox.getTopRight().getLatitude()) / (double)HEATMAP_HEIGHT;
-		double lat = latStep * (double)x + (latStep / 2.0);
+		double lat = latStep * x + (latStep / 2.0);
 		double lonStep = Math.abs(bbox.getBottomLeft().getLongitude() - bbox.getTopRight().getLongitude()) / (double)HEATMAP_WIDTH;
-		double lon = lonStep * (double)y + (lonStep / 2.0);
-		return new Location(lat, lon);
+		double lon = lonStep * y + (lonStep / 2.0);
+		return new Location(lat + bbox.getBottomLeft().getLatitude(), lon + bbox.getBottomLeft().getLongitude());
 	}
 	
 	private Point getIndiciesForLocation(Location loc) {
 		double latStep = Math.abs(bbox.getBottomLeft().getLatitude() - bbox.getTopRight().getLatitude()) / (double)HEATMAP_HEIGHT;
-		int heightIndex = (int) Math.floor(loc.getLatitude() - bbox.getBottomLeft().getLatitude() / latStep);
+		int heightIndex = (int) Math.floor((loc.getLatitude() - bbox.getBottomLeft().getLatitude()) / latStep);
 		double lonStep = Math.abs(bbox.getBottomLeft().getLongitude() - bbox.getTopRight().getLongitude()) / (double)HEATMAP_WIDTH;
-		int widthIndex = (int) Math.floor(loc.getLongitude() - bbox.getBottomLeft().getLongitude() / lonStep);
+		int widthIndex = (int) Math.floor((loc.getLongitude() - bbox.getBottomLeft().getLongitude()) / lonStep);
 		return new Point(heightIndex, widthIndex);
 	}
 }
