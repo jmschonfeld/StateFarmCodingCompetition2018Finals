@@ -38,4 +38,10 @@ public class Location {
     public String getDisplayName() {
         return displayName;
     }
+
+    public Location addMileOffset(double x, double y) {
+        Location up = Util.getLocationOffset(this, 0, y);
+
+        return Util.getLocationOffset(up, 90, x);
+    }
 }

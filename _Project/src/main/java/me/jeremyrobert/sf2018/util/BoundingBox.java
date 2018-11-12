@@ -1,5 +1,8 @@
 package me.jeremyrobert.sf2018.util;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class BoundingBox {
 
     private Location bottomLeft;
@@ -17,6 +20,13 @@ public class BoundingBox {
 
     public Location getBottomLeft() {
         return bottomLeft;
+    }
+
+    public List<Location> getContainedLocations(List<Location> locs) {
+        return locs.stream().filter(loc -> loc.getLatitude() >= bottomLeft.getLatitude()
+                && loc.getLongitude() >= bottomLeft.getLongitude()
+                && loc.getLatitude() <= topRight.getLatitude()
+                && loc.getLongitude() <= topRight.getLongitude()).collect(Collectors.toList());
     }
 
     @Override
