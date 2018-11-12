@@ -1,6 +1,7 @@
 package me.jeremyrobert.sf2018.util;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class HeatMap {
@@ -28,6 +29,7 @@ public class HeatMap {
 			loc.getLatitude() > bbox.getTopRight().getLatitude() ||
 			loc.getLongitude() < bbox.getBottomLeft().getLongitude() ||
 			loc.getLongitude() > bbox.getTopRight().getLongitude()) {
+			System.out.println("OUTSIDE BOUNDS");
 			return;
 		}
 		
@@ -47,6 +49,7 @@ public class HeatMap {
 						cache.put(getLocationForIndicies(i, j), data[i][j]);
 				}
 			}
+			//System.out.println(Arrays.deepToString(data));
 			this.hasUpdates = false;
 		}
 		
@@ -65,15 +68,13 @@ public class HeatMap {
 			}
 		}
 		
-		if (currentMin < 0) {
-			currentMax += currentMin;
-		}
+		System.out.println("Min: " + currentMin + " Max: " + currentMax);
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[i].length; j++) {
-				if (currentMin < 0) {
-					data[i][j] = (data[i][j] + currentMin) / currentMax;
+				if (data[i][j] < 0) {
+					data[i][j] = 0;
 				} else {
-					data[i][j] = data[i][j] / currentMax;
+					data[i][j] = (data[i][j]) / currentMax;
 				}
 			}
 		}

@@ -53,7 +53,7 @@ public class MapImagePanel extends JPanel{
 
     	int x = (int)((loc.getLongitude()-bbox.getBottomLeft().getLongitude()) * pixelsPerLong);
     	int y = (int)(Math.abs(loc.getLatitude()-bbox.getTopRight().getLatitude()) * pixelsPerLat);
-    	return new Point(x, y);
+    	return new Point(x, y + 10);
     }
 
     @Override
@@ -67,8 +67,9 @@ public class MapImagePanel extends JPanel{
 	        	for (Location loc : heat.keySet()) {
 	        		double locHeat = heat.get(loc);
 	        		Point p = locationToPixel(loc);
+	        		//image.getGraphics().get
 	        		g.setColor(new Color(255, 0, 0, (int)(locHeat * 255.0)));
-	        		g.fillRect(p.x - 5, p.y - 5, 10, 10);
+	        		g.fillOval(p.x - 5, p.y - 5, 10, 10);
 	        	}
         	}
         	

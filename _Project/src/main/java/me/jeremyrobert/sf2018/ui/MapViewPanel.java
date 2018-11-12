@@ -21,6 +21,7 @@ import me.jeremyrobert.sf2018.model.FatalVehicleCrash;
 import me.jeremyrobert.sf2018.osm.OpenStreetMap;
 import me.jeremyrobert.sf2018.util.BoundingBox;
 import me.jeremyrobert.sf2018.util.MapTileAPI;
+import me.jeremyrobert.sf2018.util.MapTileAPI.MapTile;
 import me.jeremyrobert.sf2018.util.InsuranceType;
 import me.jeremyrobert.sf2018.util.Location;
 
@@ -103,7 +104,7 @@ public class MapViewPanel extends JPanel {
 			return;
 		}
 		
-		Image tile;
+		MapTile tile;
 		try {
 			tile = MapTileAPI.getImageForBoundingBox(boundBox);
 		} catch (IOException e) {
@@ -113,7 +114,7 @@ public class MapViewPanel extends JPanel {
 			return;
 		}
 		
-		this.imageView.setImage(tile, boundBox);
+		this.imageView.setImage(tile.img, tile.bbox);
 		
 		if (insuranceType == InsuranceType.AUTO) {
 			FatalVehicleCrash[] crashes = DataManager.getFatalVehicleCrashes();
@@ -126,9 +127,11 @@ public class MapViewPanel extends JPanel {
 		} else if (insuranceType == InsuranceType.HOME) {
 			try {
 				for (Location loc : OpenStreetMap.fetchLocations(boundBox, "school")) {
+					System.out.println("adding");
 					this.imageView.getHeatMap().addPoint(loc);
 				}
 				for (Location loc : OpenStreetMap.fetchLocations(boundBox, "fire_station")) {
+					System.out.println("adding");
 					this.imageView.getHeatMap().addPoint(loc, -1);
 				}
 			} catch (IOException e) {
