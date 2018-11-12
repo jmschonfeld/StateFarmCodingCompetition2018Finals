@@ -3,13 +3,18 @@ package me.jeremyrobert.sf2018.ui;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+
+import me.jeremyrobert.sf2018.osm.OpenStreetMap;
+import me.jeremyrobert.sf2018.util.Location;
 
 public class GenerateReportsPanel extends JPanel {
 	private static final long serialVersionUID = 4799016462897119767L;
@@ -100,9 +105,28 @@ public class GenerateReportsPanel extends JPanel {
 	
 	private void generate() {
 		System.out.println("Generating report for '" + locationField.getText() + "'");
-		rLocation.setText(locationField.getText());
+		rLocation.setText("");
+		rAuto.setText("");
+		rAutoContrib.setText("");
+		rHome.setText("");
+		rHomeContrib.setText("");
+		rLife.setText("");
+		rLifeContrib.setText("");
 		
-		formatReportPanel();
+		try {
+			Location location = OpenStreetMap.getLocation(locationField.getText());
+			if (location == null) {
+				JOptionPane.showMessageDialog(null, "Location not found. Please try another search term.", "Location Not Found", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			rLocation.setText(location.getDisplayName());
+			formatReportPanel();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "An error ocurred while generating the report. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 	}
 
 }

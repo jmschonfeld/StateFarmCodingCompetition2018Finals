@@ -8,6 +8,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,6 +32,16 @@ public class OpenStreetMap {
         }
 
         QueryData() {}
+    }
+    
+    public Point getTile(BoundingBox box) {
+    	int n = 2 ^ 15; // calculate zoom, not always 15
+    	double lat = (box.getTopRight().getLatitude() + box.getBottomLeft().getLatitude()) / 2;
+    	double lon = (box.getTopRight().getLongitude() + box.getBottomLeft().getLongitude()) / 2;
+    	int xtile = n * (((int)lon + 180) / 360);
+    	int lat_rad = (int)(lat * Math.PI) / 180;
+    	int ytile = (int) (n * (1 - (Math.log(Math.tan(lat_rad) + 1/Math.cos(lat_rad)) / Math.PI)) / 2);
+    	return new Point(xtile, ytile);
     }
 
     public static BoundingBox getBoundingBox(String query) throws IOException {
