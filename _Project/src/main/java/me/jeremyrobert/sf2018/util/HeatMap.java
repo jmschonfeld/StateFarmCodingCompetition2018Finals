@@ -55,16 +55,25 @@ public class HeatMap {
 	
 	private void normalize() {
 		double currentMax = Double.MIN_VALUE;
+		double currentMin = data[0][0];
 		for (int i = 0; i < data.length; i++) {
 			double[] row = data[i];
 			for (int j = 0; j < row.length; j++) {
 				currentMax = Math.max(currentMax, row[j]);
+				currentMin = Math.min(currentMin, row[j]);
 			}
 		}
 		
+		if (currentMin < 0) {
+			currentMax += currentMin;
+		}
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[i].length; j++) {
-				data[i][j] = data[i][j] / currentMax;
+				if (currentMin < 0) {
+					data[i][j] = (data[i][j] + currentMin) / currentMax;
+				} else {
+					data[i][j] = data[i][j] / currentMax;
+				}
 			}
 		}
 	}

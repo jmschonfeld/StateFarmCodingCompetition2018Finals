@@ -22,6 +22,7 @@ import me.jeremyrobert.sf2018.osm.OpenStreetMap;
 import me.jeremyrobert.sf2018.util.BoundingBox;
 import me.jeremyrobert.sf2018.util.MapTileAPI;
 import me.jeremyrobert.sf2018.util.InsuranceType;
+import me.jeremyrobert.sf2018.util.Location;
 
 public class MapViewPanel extends JPanel {
 	private static final long serialVersionUID = 3948060070912799213L;
@@ -122,9 +123,24 @@ public class MapViewPanel extends JPanel {
 			this.imageView.getHeatMap().getColoring();
 			this.imageView.setVisible(true);
 		} else if (insuranceType == InsuranceType.HOME) {
-			
+			try {
+				for (Location loc : OpenStreetMap.fetchLocations(boundBox, "school")) {
+					this.imageView.getHeatMap().addPoint(loc);
+				}
+				for (Location loc : OpenStreetMap.fetchLocations(boundBox, "fire_station")) {
+					this.imageView.getHeatMap().addPoint(loc, -1);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (insuranceType == InsuranceType.LIFE) {
-			
+			try {
+				for (Location loc : OpenStreetMap.fetchLocations(boundBox, "restaurant")) {
+					this.imageView.getHeatMap().addPoint(loc);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		LoadingScreen.end();
