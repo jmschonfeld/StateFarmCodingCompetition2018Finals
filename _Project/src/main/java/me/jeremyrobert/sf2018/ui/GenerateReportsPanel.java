@@ -126,12 +126,15 @@ public class GenerateReportsPanel extends JPanel {
 				return;
 			}
 
-			Map<InsuranceType, Double> risks = RiskCalc.calculateRisks(location);
+			Map<InsuranceType, RiskCalc.RiskData> risks = RiskCalc.calculateRisks(location);
 			
 			rLocation.setText(location.getDisplayName());
-			rAuto.setText(formatRisk(risks.get(InsuranceType.AUTO)));
-			rHome.setText(formatRisk(risks.get(InsuranceType.HOME)));
-			rLife.setText(formatRisk(risks.get(InsuranceType.LIFE)));
+			rAuto.setText(formatRisk(risks.get(InsuranceType.AUTO).risk));
+			rAutoContrib.setText(risks.get(InsuranceType.AUTO).description);
+			rHome.setText(formatRisk(risks.get(InsuranceType.HOME).risk));
+			rHomeContrib.setText(risks.get(InsuranceType.HOME).description);
+			rLife.setText(formatRisk(risks.get(InsuranceType.LIFE).risk));
+			rLifeContrib.setText(risks.get(InsuranceType.LIFE).description);
 			formatReportPanel();
 		} catch (IOException e) {
 			e.printStackTrace();

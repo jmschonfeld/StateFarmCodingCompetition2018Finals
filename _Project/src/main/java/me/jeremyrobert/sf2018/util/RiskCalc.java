@@ -11,7 +11,17 @@ import java.util.Map;
 
 public class RiskCalc {
 
-    public static Map<InsuranceType, Double> calculateRisks(Location location) {
+    public static class RiskData {
+        public double risk;
+        public String description;
+
+        public RiskData(double risk, String description) {
+            this.risk = risk;
+            this.description = description;
+        }
+    }
+
+    public static Map<InsuranceType, RiskData> calculateRisks(Location location) {
         BoundingBox box = new BoundingBox(location.addMileOffset(-5, -5), location.addMileOffset(5, 5));
 
         InsuranceType[] types = InsuranceType.values();
@@ -22,7 +32,7 @@ public class RiskCalc {
 
         Double[] risks = TaskRunner.runTasks(tasks, Double.class);*/
 
-        Map<InsuranceType, Double> riskMap = new HashMap<>();
+        Map<InsuranceType, RiskData> riskMap = new HashMap<>();
         /*for (int i = 0; i < types.length; i++) {
             riskMap.put(types[i], risks[i]);
         }*/
@@ -37,12 +47,12 @@ public class RiskCalc {
         return riskMap;
     }
 
-    private static double calculateAutoRisk(BoundingBox box) throws IOException {
+    private static RiskData calculateAutoRisk(BoundingBox box) throws IOException {
         List<Location> locs = OpenStreetMap.fetchLocations(box, "bar");
-        return 0.5 + locs.size() / 5;
+        return new RiskData(0.5 + locs.size() / 5, locs.size() + " nearby bar" + s(locs.size()));
     }
 
-    private static double calculateHomeRisk(BoundingBox box) throws IOException {
+    private static RiskData calculateHomeRisk(BoundingBox box) throws IOException {
         /*List<Location>[] arrs = TaskRunner.runTasks(new Task[]{
                 getLocationsTask(box, "school"),
                 getLocationsTask(box, "fire_station")
@@ -54,13 +64,18 @@ public class RiskCalc {
         List<Location> schools = OpenStreetMap.fetchLocations(box, "school");
         List<Location> fireDepts = OpenStreetMap.fetchLocations(box, "fire_station");
 
-        return 0.5 + schools.size() / 5 - fireDepts.size() / 5;
+        return new RiskData(0.5 + schools.size() / 5 - fireDepts.size() / 5, schools.size() +
+                " nearby school" + s(schools.size()) + ", " + fireDepts.size() + " nearby fire station" + s(fireDepts.size()));
     }
 
-    private static double calculateLifeRisk(BoundingBox box) throws IOException {
+    private static String s(int num) {
+        return num == 1 ? "" : "s";
+    }
+
+    private static RiskData calculateLifeRisk(BoundingBox box) throws IOException {
         List<Location> restaurants = OpenStreetMap.fetchLocations(box, "restaurant");
 
-        return 0.5 + restaurants.size() / 5;
+        return new RiskData(0.5 + restaurants.size() / 5, restaurants.size() + " nearby restaurant" + s(restaurants.size()));
     }
 /*
     private static Task<List<Location>> getLocationsTask(BoundingBox box, String amenity) {
