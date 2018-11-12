@@ -32,6 +32,7 @@ public class MapViewPanel extends JPanel {
 	private MapImagePanel imageView;
 	
 	private InsuranceType insuranceType = InsuranceType.AUTO;
+	private String currentTerm = null;
 
 	public MapViewPanel() {
 		this.setLayout(new BorderLayout());
@@ -79,6 +80,10 @@ public class MapViewPanel extends JPanel {
 	}
 	
 	private void onSearch(String term) {
+		if (term == null) {
+			return;
+		}
+		currentTerm = term;
 		LoadingScreen.start();
 		System.out.println("Searched for '" + term + "'");
 		BoundingBox boundBox;
@@ -124,5 +129,11 @@ public class MapViewPanel extends JPanel {
 	
 	private void onChangeInsuranceType(InsuranceType type) {
 		this.insuranceType = type;
+		new Thread() {
+			@Override
+			public void run() {
+				onSearch(currentTerm);
+			}
+		}.start();
 	}
 }
