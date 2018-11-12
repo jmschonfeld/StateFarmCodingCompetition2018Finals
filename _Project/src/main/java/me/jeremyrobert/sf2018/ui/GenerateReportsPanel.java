@@ -81,7 +81,7 @@ public class GenerateReportsPanel extends JPanel {
 		rLifeContrib = new JLabel();
 		resPanel.add(rLifeContrib);
 		resPanel.add(new JPanel());
-		resPanel.add(Box.createHorizontalGlue());
+		resPanel.add(Box.createHorizontalStrut(300));
 
 		formatReportPanel();
 		
