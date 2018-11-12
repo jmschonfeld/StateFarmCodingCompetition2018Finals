@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import me.jeremyrobert.sf2018.DataManager;
+import me.jeremyrobert.sf2018.model.FatalVehicleCrash;
 import me.jeremyrobert.sf2018.osm.OpenStreetMap;
 import me.jeremyrobert.sf2018.util.BoundingBox;
 import me.jeremyrobert.sf2018.util.MapTileAPI;
@@ -28,6 +30,8 @@ public class MapViewPanel extends JPanel {
 	private JButton searchButton;
 	private JComboBox<String> insuranceSelector;
 	private MapImagePanel imageView;
+	
+	private InsuranceType insuranceType = InsuranceType.AUTO;
 
 	public MapViewPanel() {
 		this.setLayout(new BorderLayout());
@@ -104,10 +108,21 @@ public class MapViewPanel extends JPanel {
 		}
 		
 		this.imageView.setImage(tile, boundBox);
+		
+		if (insuranceType == InsuranceType.AUTO) {
+			for (FatalVehicleCrash crash : DataManager.getFatalVehicleCrashes()) {
+				this.imageView.getHeatMap().addPoint(crash.getLocation(), 1);
+			}
+		} else if (insuranceType == InsuranceType.HOME) {
+			
+		} else if (insuranceType == InsuranceType.LIFE) {
+			
+		}
+		
 		LoadingScreen.end();
 	}
 	
 	private void onChangeInsuranceType(InsuranceType type) {
-		System.out.println("Changed insurance to '" + type.name() + "'");
+		this.insuranceType = type;
 	}
 }
