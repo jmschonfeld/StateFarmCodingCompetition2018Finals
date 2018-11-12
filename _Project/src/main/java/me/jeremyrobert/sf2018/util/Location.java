@@ -2,11 +2,14 @@ package me.jeremyrobert.sf2018.util;
 
 public class Location {
 
-    private double latitude;
-
-    private double longitude;
-
+    private double latitude, longitude;
+    private String displayName;
+    
     public Location(double latitude, double longitude) {
+    	this(latitude, longitude, null);
+    }
+
+    public Location(double latitude, double longitude, String displayName) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
