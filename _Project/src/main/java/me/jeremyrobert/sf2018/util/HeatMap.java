@@ -18,7 +18,19 @@ public class HeatMap {
 		data = new double[HEATMAP_HEIGHT][HEATMAP_WIDTH];
 	}
 	
+	public void addPoint(Location loc) {
+		addPoint(loc, 1);
+	}
+	
 	public void addPoint(Location loc, int value) {
+		
+		if (loc.getLatitude() < bbox.getBottomLeft().getLatitude() ||
+			loc.getLatitude() > bbox.getTopRight().getLatitude() ||
+			loc.getLongitude() < bbox.getBottomLeft().getLongitude() ||
+			loc.getLongitude() > bbox.getTopRight().getLongitude()) {
+			return;
+		}
+		
 		Point index = getIndiciesForLocation(loc);
 		data[index.x][index.y] += value;
 		this.hasUpdates = true;
