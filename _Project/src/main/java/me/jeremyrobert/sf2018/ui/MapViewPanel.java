@@ -115,9 +115,12 @@ public class MapViewPanel extends JPanel {
 		this.imageView.setImage(tile, boundBox);
 		
 		if (insuranceType == InsuranceType.AUTO) {
+			this.imageView.setVisible(false);
 			for (FatalVehicleCrash crash : DataManager.getFatalVehicleCrashes()) {
 				this.imageView.getHeatMap().addPoint(crash.getLocation(), 1);
 			}
+			this.imageView.getHeatMap().getColoring();
+			this.imageView.setVisible(true);
 		} else if (insuranceType == InsuranceType.HOME) {
 			
 		} else if (insuranceType == InsuranceType.LIFE) {
