@@ -75,17 +75,20 @@ public class MapViewPanel extends JPanel {
 	}
 	
 	private void onSearch(String term) {
+		LoadingScreen.start();
 		System.out.println("Searched for '" + term + "'");
 		BoundingBox boundBox;
 		try {
 			boundBox = OpenStreetMap.getBoundingBox(term);
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "An error ocurred while generating the map. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		if (boundBox == null) {
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "Location not found. Please try another search term.", "Location Not Found", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -95,12 +98,14 @@ public class MapViewPanel extends JPanel {
 			tile = MapTileAPI.getImageForBoundingBox(boundBox);
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "An error ocurred while displaying the map. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		this.imageView.setImage(tile);
 		System.out.println("Updated map");
+		LoadingScreen.end();
 	}
 	
 	private void onChangeInsuranceType(InsuranceType type) {
