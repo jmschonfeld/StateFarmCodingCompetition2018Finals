@@ -3,6 +3,7 @@ package me.jeremyrobert.sf2018.util;
 public class Location {
 
     private double latitude, longitude;
+
     private String displayName;
     
     public Location(double latitude, double longitude) {
@@ -12,6 +13,7 @@ public class Location {
     public Location(double latitude, double longitude, String displayName) {
         this.latitude = latitude;
         this.longitude = longitude;
+        this.displayName = displayName;
     }
 
     public double getLongitude() {
@@ -24,6 +26,16 @@ public class Location {
 
     @Override
     public String toString() {
-        return "[" + latitude + ", " + longitude + "]";
+        String str = "[" + latitude + ", " + longitude;
+
+        if (displayName != null) {
+            str += ", " + displayName;
+        }
+
+        return str + "]";
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

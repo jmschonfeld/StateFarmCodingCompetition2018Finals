@@ -18,4 +18,9 @@ public class BoundingBox {
     public Location getBottomLeft() {
         return bottomLeft;
     }
+
+    @Override
+    public String toString() {
+        return "[" + bottomLeft + ", " + topRight + "]";
+    }
 }

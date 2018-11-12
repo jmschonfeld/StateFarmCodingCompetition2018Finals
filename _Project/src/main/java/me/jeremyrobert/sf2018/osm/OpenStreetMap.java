@@ -20,15 +20,30 @@ import java.util.List;
 
 public class OpenStreetMap {
 
+    private static class QueryData {
+        BoundingBox box;
+        Location loc;
+
+        QueryData(BoundingBox box, Location loc) {
+            this.box = box;
+            this.loc = loc;
+        }
+
+        QueryData() {}
+    }
+
     public static BoundingBox getBoundingBox(String query) throws IOException {
         String url = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(query, "UTF-8") + "&format=xml";
         String result = getRequest(url);
-        System.out.println(result);
-        return null;
+
+        return parseQueryXML(result).box;
     }
 
     public static Location getLocation(String query) throws IOException {
-        return null;
+        String url = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(query, "UTF-8") + "&format=xml";
+        String result = getRequest(url);
+
+        return parseQueryXML(result).loc;
     }
 
     public static List<Location> fetchLocations(Location bottomLeft, Location topRight, String amenity) throws IOException {
@@ -90,30 +105,53 @@ public class OpenStreetMap {
         return locations;
     }
 
-    private static BoundingBox parseBoundingBoxXML(String xml) throws IOException {
+    private static QueryData parseQueryXML(String xml) throws IOException {
         Document document = getXMLDocument(xml);
 
-        BoundingBox empty = new BoundingBox(new Location(0, 0), new Location(0, 0));
-
         if (document == null) {
-            return empty;
+            return new QueryData();
         }
 
         NodeList places = document.getElementsByTagName("place");
         int len = places.getLength();
 
         if (len == 0) {
-            return empty;
+            return new QueryData();
         }
 
         Node node = places.item(0);
         NamedNodeMap attr = node.getAttributes();
         Node boundingBox = attr.getNamedItem("boundingbox");
-        if (boundingBox == null) {
-            return empty;
+        Node lat = attr.getNamedItem("lat");
+        Node lon = attr.getNamedItem("lon");
+        if (boundingBox == null || lat == null || lon == null) {
+            return new QueryData();
         }
-        //String value =
-        return null;
+
+        String bbValue = boundingBox.getNodeValue();
+        String latValue = lat.getNodeValue();
+        String lonValue = lon.getNodeValue();
+        if (bbValue == null || latValue == null || lonValue == null) {
+            return new QueryData();
+        }
+
+        Node displayName = attr.getNamedItem("display_name");
+        String displayNameStr = "[Unavailable]";
+        if (displayName != null) {
+            String value = displayName.getNodeValue();
+            if (value != null) {
+                displayNameStr = value;
+            }
+        }
+
+        String[] vals = bbValue.split(",");
+        return new QueryData(
+                new BoundingBox(
+                        new Location(Double.parseDouble(vals[0]), Double.parseDouble(vals[2])),
+                        new Location(Double.parseDouble(vals[1]), Double.parseDouble(vals[3]))
+                ),
+                new Location(Double.parseDouble(latValue), Double.parseDouble(lonValue), displayNameStr)
+        );
     }
 
     private static String getRequest(String urlStr) throws IOException {
