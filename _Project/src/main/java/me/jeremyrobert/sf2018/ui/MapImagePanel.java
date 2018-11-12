@@ -48,8 +48,8 @@ public class MapImagePanel extends JPanel{
         return new Point((int)Math.round(width * (0.5 + loc.getLongitude() / 360.0)), (int)Math.round(height * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI))));
     	*/
     	
-    	int pixelsPerLat = (int)(height / (bbox.getTopRight().getLatitude() - bbox.getBottomLeft().getLatitude()));
-    	int pixelsPerLong = (int)(width / (bbox.getTopRight().getLongitude() - bbox.getBottomLeft().getLongitude()));
+    	double pixelsPerLat = (height * 1.0 / (bbox.getTopRight().getLatitude() - bbox.getBottomLeft().getLatitude()));
+		double pixelsPerLong = (width * 1.0 / (bbox.getTopRight().getLongitude() - bbox.getBottomLeft().getLongitude()));
 
     	int x = (int)((loc.getLongitude()-bbox.getBottomLeft().getLongitude()) * pixelsPerLong);
     	int y = (int)(Math.abs(loc.getLatitude()-bbox.getTopRight().getLatitude()) * pixelsPerLat);
@@ -60,7 +60,7 @@ public class MapImagePanel extends JPanel{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
-        	g.drawImage(image, 0, 0, this);
+        	g.drawImage(image, 0, 0, width, height, this);
         	
         	if (heatMap != null) {
 	        	HashMap<Location, Double> heat = heatMap.getColoring();

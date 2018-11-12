@@ -43,7 +43,8 @@ public class HeatMap {
 			cache = new HashMap<>();
 			for (int i = 0; i < data.length; i++) {
 				for (int j = 0; j < data[i].length; j++) {
-					cache.put(getLocationForIndicies(i, j), data[i][j]);
+					if (data[i][j] > 10e-4)
+						cache.put(getLocationForIndicies(i, j), data[i][j]);
 				}
 			}
 			this.hasUpdates = false;
