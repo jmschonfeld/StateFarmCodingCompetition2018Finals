@@ -27,7 +27,7 @@ public class MapViewPanel extends JPanel {
 	private JTextField searchBar;
 	private JButton searchButton;
 	private JComboBox<String> insuranceSelector;
-	private ImagePanel imageView;
+	private MapImagePanel imageView;
 
 	public MapViewPanel() {
 		this.setLayout(new BorderLayout());
@@ -70,22 +70,25 @@ public class MapViewPanel extends JPanel {
 		menuPanel.setBorder(BorderFactory.createTitledBorder("Menu"));
 		this.add(menuPanel, BorderLayout.EAST);
 		
-		imageView = new ImagePanel(null);
+		imageView = new MapImagePanel(null, 1100, 650);
 		this.add(imageView, BorderLayout.CENTER);
 	}
 	
 	private void onSearch(String term) {
+		LoadingScreen.start();
 		System.out.println("Searched for '" + term + "'");
 		BoundingBox boundBox;
 		try {
 			boundBox = OpenStreetMap.getBoundingBox(term);
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "An error ocurred while generating the map. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		if (boundBox == null) {
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "Location not found. Please try another search term.", "Location Not Found", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -95,12 +98,13 @@ public class MapViewPanel extends JPanel {
 			tile = MapTileAPI.getImageForBoundingBox(boundBox);
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "An error ocurred while displaying the map. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
-		this.imageView.setImage(tile);
-		System.out.println("Updated map");
+		this.imageView.setImage(tile, boundBox);
+		LoadingScreen.end();
 	}
 	
 	private void onChangeInsuranceType(InsuranceType type) {

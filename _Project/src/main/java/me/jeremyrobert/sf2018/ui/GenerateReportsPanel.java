@@ -108,6 +108,7 @@ public class GenerateReportsPanel extends JPanel {
 	}
 	
 	private void generate() {
+		LoadingScreen.start();
 		System.out.println("Generating report for '" + locationField.getText() + "'");
 		rLocation.setText("");
 		rAuto.setText("");
@@ -120,6 +121,7 @@ public class GenerateReportsPanel extends JPanel {
 		try {
 			Location location = OpenStreetMap.getLocation(locationField.getText());
 			if (location == null) {
+				LoadingScreen.end();
 				JOptionPane.showMessageDialog(null, "Location not found. Please try another search term.", "Location Not Found", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
@@ -133,9 +135,11 @@ public class GenerateReportsPanel extends JPanel {
 			formatReportPanel();
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoadingScreen.end();
 			JOptionPane.showMessageDialog(null, "An error ocurred while generating the report. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		LoadingScreen.end();
 	}
 
 	private String formatRisk(double risk) {
