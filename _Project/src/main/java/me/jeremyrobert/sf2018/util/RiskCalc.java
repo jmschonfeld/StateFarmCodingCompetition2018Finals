@@ -15,16 +15,23 @@ public class RiskCalc {
         BoundingBox box = new BoundingBox(location.addMileOffset(-5, -5), location.addMileOffset(5, 5));
 
         InsuranceType[] types = InsuranceType.values();
-        Task[] tasks = new Task[types.length];
+        /*Task[] tasks = new Task[types.length];
         for (int i = 0; i < types.length; i++) {
             tasks[i] = getRiskTask(types[i], box);
         }
 
-        Double[] risks = TaskRunner.runTasks(tasks, Double.class);
+        Double[] risks = TaskRunner.runTasks(tasks, Double.class);*/
 
         Map<InsuranceType, Double> riskMap = new HashMap<>();
-        for (int i = 0; i < types.length; i++) {
+        /*for (int i = 0; i < types.length; i++) {
             riskMap.put(types[i], risks[i]);
+        }*/
+        try {
+            riskMap.put(InsuranceType.AUTO, calculateAutoRisk(box));
+            riskMap.put(InsuranceType.HOME, calculateHomeRisk(box));
+            riskMap.put(InsuranceType.LIFE, calculateLifeRisk(box));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return riskMap;
@@ -35,14 +42,17 @@ public class RiskCalc {
         return 0.5 + locs.size() / 5;
     }
 
-    private static double calculateHomeRisk(BoundingBox box) {
-        List<Location>[] arrs = TaskRunner.runTasks(new Task[]{
+    private static double calculateHomeRisk(BoundingBox box) throws IOException {
+        /*List<Location>[] arrs = TaskRunner.runTasks(new Task[]{
                 getLocationsTask(box, "school"),
                 getLocationsTask(box, "fire_station")
         }, List.class);
 
         List<Location> schools = arrs[0];
-        List<Location> fireDepts = arrs[1];
+        List<Location> fireDepts = arrs[1];*/
+
+        List<Location> schools = OpenStreetMap.fetchLocations(box, "school");
+        List<Location> fireDepts = OpenStreetMap.fetchLocations(box, "fire_station");
 
         return 0.5 + schools.size() / 5 - fireDepts.size() / 5;
     }
@@ -52,7 +62,7 @@ public class RiskCalc {
 
         return 0.5 + restaurants.size() / 5;
     }
-
+/*
     private static Task<List<Location>> getLocationsTask(BoundingBox box, String amenity) {
         return new Task<List<Location>>() {
             @Override
@@ -88,5 +98,5 @@ public class RiskCalc {
                 }
             }
         };
-    }
+    }*/
 }
