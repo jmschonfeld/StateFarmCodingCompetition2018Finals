@@ -2,9 +2,13 @@ package me.jeremyrobert.sf2018.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.*;
-import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class CSVParser<T > {
 	
@@ -15,8 +19,7 @@ public class CSVParser<T > {
 	}
 
 	@SuppressWarnings("unchecked")
-	public T[] parse() throws FileNotFoundException {
-		Class<T> objClass = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	public T[] parse(Class<T> objClass) throws FileNotFoundException {
 
 		Map<String, Field> colFields = new HashMap<>(); // Maps column name to the class's field
 
@@ -70,7 +73,8 @@ public class CSVParser<T > {
 			}
 		}
 		scanner.close();
-		T[] arr = (T[]) new Object[0];
-		return list.toArray(arr);
+		T[] arr = (T[]) Array.newInstance(objClass, list.size());
+		T[] objArr = list.toArray(arr);
+		return objArr;
 	}
 }
