@@ -3,4 +3,10 @@
   <groupId>me.jeremyrobert.sf2018</groupId>
   <artifactId>SFCoding2018Finals</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 </project>
