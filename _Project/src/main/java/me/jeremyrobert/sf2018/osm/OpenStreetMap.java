@@ -58,7 +58,10 @@ public class OpenStreetMap {
         return parseQueryXML(result).loc;
     }
 
-    public static List<Location> fetchLocations(Location bottomLeft, Location topRight, String amenity) throws IOException {
+    public static List<Location> fetchLocations(BoundingBox box, String amenity) throws IOException {
+        Location bottomLeft = box.getBottomLeft();
+        Location topRight = box.getTopRight();
+
         String url = "http://www.overpass-api.de/api/xapi_meta?node" +
                 "[bbox=" + bottomLeft.getLongitude() + "," +
                 bottomLeft.getLatitude() + "," +

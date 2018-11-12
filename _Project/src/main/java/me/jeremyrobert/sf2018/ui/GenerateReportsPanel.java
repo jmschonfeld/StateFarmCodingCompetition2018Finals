@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Map;
 
 import javax.swing.BorderFactory;import javax.swing.Box;
 import javax.swing.JButton;
@@ -14,7 +16,9 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import me.jeremyrobert.sf2018.osm.OpenStreetMap;
+import me.jeremyrobert.sf2018.util.InsuranceType;
 import me.jeremyrobert.sf2018.util.Location;
+import me.jeremyrobert.sf2018.util.RiskCalc;
 
 public class GenerateReportsPanel extends JPanel {
 	private static final long serialVersionUID = 4799016462897119767L;
@@ -119,8 +123,13 @@ public class GenerateReportsPanel extends JPanel {
 				JOptionPane.showMessageDialog(null, "Location not found. Please try another search term.", "Location Not Found", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
+
+			Map<InsuranceType, Double> risks = RiskCalc.calculateRisks(location);
 			
 			rLocation.setText(location.getDisplayName());
+			rAuto.setText(formatRisk(risks.get(InsuranceType.AUTO)));
+			rHome.setText(formatRisk(risks.get(InsuranceType.HOME)));
+			rLife.setText(formatRisk(risks.get(InsuranceType.LIFE)));
 			formatReportPanel();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -129,4 +138,8 @@ public class GenerateReportsPanel extends JPanel {
 		}
 	}
 
+	private String formatRisk(double risk) {
+		DecimalFormat df = new DecimalFormat("#.##");
+		return df.format(risk);
+	}
 }
